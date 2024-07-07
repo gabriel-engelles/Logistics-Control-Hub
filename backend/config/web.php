@@ -50,6 +50,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                // Here you can define custom URL rules if needed
             ],
         ],
     ],
@@ -58,23 +59,27 @@ $config = [
             'class' => 'amnah\yii2\user\Module',
             // set custom module properties here ...
         ],
+        'api' => [
+            'class' => 'app\modules\api\ApiModule',
+            // Additional configurations for 'api' module here, if needed
+        ],
     ],
     'params' => $params,
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+    // Configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
+        // Uncomment the line below to add your IP if not connecting from localhost
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
+        // Uncomment the line below to add your IP if not connecting from localhost
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
