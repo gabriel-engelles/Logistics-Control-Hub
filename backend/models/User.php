@@ -3,18 +3,40 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
+use amnah\yii2\user\models\User as AmnahUser;
+use amnah\yii2\user\models\Profile;
+use amnah\yii2\user\models\Role;
+use amnah\yii2\user\models\UserAuth;
+use amnah\yii2\user\models\UserToken;
 
-class User extends ActiveRecord implements IdentityInterface
+
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property int $role_id
+ * @property int $status
+ * @property string|null $email
+ * @property string|null $username
+ * @property string|null $password
+ * @property string|null $auth_key
+ * @property string|null $access_token
+ * @property string|null $logged_in_ip
+ * @property string|null $logged_in_at
+ * @property string|null $created_ip
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ * @property string|null $banned_at
+ * @property string|null $banned_reason
+ *
+ * @property Profile[] $profiles
+ * @property Role $role
+ * @property UserAuth[] $userAuths
+ * @property UserToken[] $userTokens
+ */
+class User extends AmnahUser
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'user';
-    }
+    public $newPassword;
 
     /**
      * {@inheritdoc}
@@ -22,93 +44,73 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['email', 'password'], 'required'],
+
+            [['username', 'email'], 'required'],
+            [['username', 'password'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 100],
-            [['password'], 'string', 'min' => 5],
-            [['email'], 'unique'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
-    /**
+     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function beforeSave($insert)
     {
-        return [
-            'email' => 'Email',
-            'password' => 'Password',
-        ];
+        if (parent::beforeSave($insert)) {
+            // Hash the password if it's a new record or the password has been changed
+            if ($this->isNewRecord || $this->newPassword) {
+                $this->password = Yii::$app->security->generatePasswordHash($this->newPassword);
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
     }
 
-    /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
-     */
-    public function validatePassword($password)
-    {
-        return Yii::$app->security->validatePassword($password, $this->password);
-    }
-
-    /**
-     * Sets password hash
+   /**
+     * Sets the password securely.
      *
      * @param string $password
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->newPassword = $password;
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function findIdentity($id)
-    {
-        return static::findOne($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return static::findOne(['access_token' => $token]);
-    }
-
-    /**
-     * Finds user by email
+     * Validates password.
      *
-     * @param string $email
+     * @param string $password
+     * @return bool
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password);
+    }
+
+    /**
+     * Gets query for [[UserAuths]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserAuths()
+    {
+        return $this->hasMany(UserAuth::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Finds a user by access token.
+     *
+     * @param string $token
      * @return static|null
      */
-    public static function findByEmail($email)
+    public static function findByAccessToken($token)
     {
-        return static::findOne(['email' => $email]);
-    }
+        // Remove the "Bearer " prefix from the token
+        $token = str_replace('Bearer ', '', $token);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthKey()
-    {
-        return $this->auth_key;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->auth_key === $authKey;
+        // Find the user by access token
+        return static::find()->where(['access_token' => $token])->one();
     }
 }

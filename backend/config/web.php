@@ -20,7 +20,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'class' => 'amnah\yii2\user\components\User',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
