@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=logistics_control_hub',
-    'username' => 'user_logistics',
-    'password' => '#3209@u/s(ER)?',
+    'dsn' => 'mysql:host=' . ($_ENV['DB_HOST'] ?? 'localhost') . ';dbname=' . ($_ENV['DB_NAME'] ?? 'Enter your database name'),
+    'username' => $_ENV['DB_USER'] ?? 'Enter your database username',
+    'password' => $_ENV['DB_PASS'] ?? 'Enter your database password',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)
