@@ -55,8 +55,11 @@ $config = [
             'rules' => [
                [
                     'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'api/delivery',
+                        'api/d-type',
+                    ],
                     'pluralize' => false,
-                    'controller' => 'api/delivery'
                ]
             ],
         ],
