@@ -33,15 +33,15 @@ $config = [
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'transport' => [
-                'scheme' => $_ENV['M_SCHEME'] ?? 'smtp',
-                'host' => $_ENV['M_HOST'] ?? 'smtp.example.com',
-                'username' => $_ENV['M_USER'] ?? 'Enter username',
-                'password' => $_ENV['M_PASS'] ?? 'Enter password',
-                'port' => $_ENV['M_PORT'] ?? 587,
+                'scheme' => $_ENV['M_SCHEME'],
+                'host' => $_ENV['M_HOST'],
+                'username' => $_ENV['M_USER'],
+                'password' => $_ENV['M_PASS'],
+                'port' => $_ENV['M_PORT'],
             ],
             'useFileTransport' => false,
             'messageConfig' => [
-                'from' => [$_ENV['M_CONFIG_1'] ?? 'email@example.com' => $_ENV['M_CONFIG_2'] ?? 'project.name'],
+                'from' => [$_ENV['M_CONFIG_1'] => $_ENV['M_CONFIG_2']],
             ],
         ],
         'log' => [
