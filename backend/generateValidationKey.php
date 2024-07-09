@@ -28,7 +28,22 @@ if (file_exists($envFilePath)) {
     $newEntry = 'COOKIE_VALIDATION_KEY=' . $key;
 
     // Prepare comments
-    $commentAbove = "# NEW COOKIE_VALIDATION_KEY";
+    $commentAbove = "# DB CONNECTION\n"
+                    ."DB_HOST=\n"
+                    ."DB_NAME=\n"
+                    ."DB_USER=\n"
+                    ."DB_PASS=\n"
+                    ."#\n"
+                    ."# MAILER CONFIG\n"
+                    ."M_SCHEME=\n"
+                    ."M_HOST=\n"
+                    ."M_USER=\n"
+                    ."M_PASS=\n"
+                    ."M_PORT=\n"
+                    ."M_CONFIG_1=#email\n"
+                    ."M_CONFIG_2=#project name\n"
+                    ."#\n"
+                    ."# NEW COOKIE_VALIDATION_KEY";
     $commentBelow = "#";
 
     // Check if the COOKIE_VALIDATION_KEY already exists in the file
