@@ -58,6 +58,7 @@ $config = [
                     'controller' => [
                         'api/delivery',
                         'api/d-type',
+                        'api/w-schedule',
                     ],
                     'pluralize' => false,
                ]
